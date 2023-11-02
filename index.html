@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conway's</title>
+    <style>
+        .frame {
+            overflow: visible;
+            border: 1px solid lightsteelblue;
+            bottom: 96px;
+            left: 96px;
+            position: absolute;
+            right: 96px;
+            top: 96px;
+        }
+        
+        svg {
+            overflow: visible;
+            border: 1px solid green;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="frame">
+        <svg></svg>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"></script>
+    <script>
+        const frame = document.querySelector('.frame')
+        const svg = d3.select('.frame svg')
+        const board = svg.append('g')
+
+        const stoneRadius = 15
+        const stoneMargin = 1
+        const squareSide = (stoneRadius + stoneMargin) * 2
+
+        function outputsize() {
+
+            boardWidth = Math.ceil(frame.offsetWidth / squareSide) + 1
+            boardHeight = Math.ceil(frame.offsetHeight / squareSide) + 1
+
+            const data = Object.keys(
+                Array(boardWidth * boardHeight).fill(0)
+            )
+                .map(x => ({
+                    row: Math.floor(x / boardWidth),
+                    col: x % boardWidth
+                }))
+
+            svg
+                .attr('width', frame.offsetWidth)
+                .attr('height', frame.offsetHeight)
+
+            board.attr('transform', `translate(-18, -18)`)
+
+            board.selectAll('rect')
+                .data(data)
+                .join(
+                    enter => enter.append('rect'),
+                    update => update,
+                    exit => exit.remove()
+                )
+                .attr('x', d => d.col * squareSide)
+                .attr('y', d => d.row * squareSide)
+                .attr('width', squareSide)
+                .attr('height', squareSide)
+                .attr('fill', 'none')
+                .attr('stroke', 'black')
+
+
+            // console.log(`${boardWidth}:${boardHeight}`)
+
+            // console.log(`${frame.offsetWidth}:${frame.offsetHeight}`)
+
+        }
+        outputsize()
+        new ResizeObserver(outputsize).observe(frame)
+    </script>
+</body>
+
+</html>
